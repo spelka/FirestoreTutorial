@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
                 {
                     Note note = documentSnapshot.toObject(Note.class);
-                    data += "Title: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
+                    note.setDocumentId(documentSnapshot.getId());
+                    data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
                 }
 
                 textViewData.setText(data);
@@ -114,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
                         {
                             Note note = documentSnapshot.toObject(Note.class);
-                            data += "Title: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
+                            note.setDocumentId(documentSnapshot.getId());
+                            data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
                         }
 
                         textViewData.setText(data);
