@@ -66,10 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (documentSnapshot.exists())
                 {
-                    String title = documentSnapshot.getString(KEY_TITLE);
-                    String description = documentSnapshot.getString(KEY_DESCRIPTION);
-
-                    textViewData.setText("Title: " + title + "\n" + "Description: " + description);
+                    Note note = documentSnapshot.toObject(Note.class);
+                    textViewData.setText("Title: " + note.getTitle() + "\n" + "Description: " + note.getDescription());
                 }
                 else
                 {
@@ -85,9 +83,7 @@ public class MainActivity extends AppCompatActivity {
         String description = editTextDescription.getText().toString();
 
         //add strings into a container to pass into the DB. Can use a map or an object.
-        Map<String, Object> note = new HashMap<>();
-        note.put(KEY_TITLE, title);
-        note.put(KEY_DESCRIPTION, description);
+        Note note = new Note(title, description);
 
         // add the note to the DB
         noteRef.set(note)
@@ -172,13 +168,8 @@ public class MainActivity extends AppCompatActivity {
                         //confirm the document snapshot exists before doing work
                         if (documentSnapshot.exists())
                         {
-                            String title = documentSnapshot.getString(KEY_TITLE);
-                            String description = documentSnapshot.getString(KEY_DESCRIPTION);
-
-                            //For Reference, an alternate way to get data back into an object
-                            //Map<String,Object> note = documentSnapshot.getData();
-
-                            textViewData.setText("Title: " + title + "\n" + "Description: " + description);
+                            Note note = documentSnapshot.toObject(Note.class);
+                            textViewData.setText("Title: " + note.getTitle() + "\n" + "Description: " + note.getDescription());
                         }
                         else
                         {
