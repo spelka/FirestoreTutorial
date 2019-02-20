@@ -62,27 +62,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //Attach event listener in onStart
-        notebookRef.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                //dont execute if there is an error
-                if ( e != null )
-                {
-                    return;
-                }
-
-                String data = "";
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
-                {
-                    Note note = documentSnapshot.toObject(Note.class);
-                    note.setDocumentId(documentSnapshot.getId());
-                    data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\nPriority: " + note.getPriority() + "\n\n";
-                }
-
-                textViewData.setText(data);
-            }
-        });
     }
 
     public void addNote(View v)
