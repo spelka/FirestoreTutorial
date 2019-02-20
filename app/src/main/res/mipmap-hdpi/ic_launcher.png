@@ -1,0 +1,79 @@
+package ca.sebon.tea_da.Database;
+
+import android.arch.lifecycle.ComputableLiveData;
+import android.arch.lifecycle.LiveData;
+import android.arch.persistence.db.SupportSQLiteStatement;
+import android.arch.persistence.room.EntityDeletionOrUpdateAdapter;
+import android.arch.persistence.room.EntityInsertionAdapter;
+import android.arch.persistence.room.InvalidationTracker.Observer;
+import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.RoomSQLiteQuery;
+import android.arch.persistence.room.SharedSQLiteStatement;
+import android.database.Cursor;
+import android.support.annotation.NonNull;
+import java.lang.Override;
+import java.lang.String;
+import java.lang.SuppressWarnings;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@SuppressWarnings("unchecked")
+public class TeaDao_Impl implements TeaDao {
+  private final RoomDatabase __db;
+
+  private final EntityInsertionAdapter __insertionAdapterOfTea;
+
+  private final EntityDeletionOrUpdateAdapter __deletionAdapterOfTea;
+
+  private final EntityDeletionOrUpdateAdapter __updateAdapterOfTea;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllTeas;
+
+  public TeaDao_Impl(RoomDatabase __db) {
+    this.__db = __db;
+    this.__insertionAdapterOfTea = new EntityInsertionAdapter<Tea>(__db) {
+      @Override
+      public String createQuery() {
+        return "INSERT OR ABORT INTO `tea_table`(`id`,`teaType`,`steepTimeShort`,`steepTimeMedium`,`steepTimeLong`,`teaAmount`,`steepTemperature`,`teaImage`) VALUES (nullif(?, 0),?,?,?,?,?,?,?)";
+      }
+
+      @Override
+      public void bind(SupportSQLiteStatement stmt, Tea value) {
+        stmt.bindLong(1, value.getId());
+        if (value.getTeaType() == null) {
+          stmt.bindNull(2);
+        } else {
+          stmt.bindString(2, value.getTeaType());
+        }
+        stmt.bindLong(3, value.getSteepTimeShort());
+        stmt.bindLong(4, value.getSteepTimeMedium());
+        stmt.bindLong(5, value.getSteepTimeLong());
+        if (value.getTeaAmount() == null) {
+          stmt.bindNull(6);
+        } else {
+          stmt.bindString(6, value.getTeaAmount());
+        }
+        if (value.getSteepTemperature() == null) {
+          stmt.bindNull(7);
+        } else {
+          stmt.bindString(7, value.getSteepTemperature());
+        }
+        stmt.bindLong(8, value.getTeaImage());
+      }
+    };
+    this.__deletionAdapterOfTea = new EntityDeletionOrUpdateAdapter<Tea>(__db) {
+      @Override
+      public String createQuery() {
+        return "DELETE FROM `tea_table` WHERE `id` = ?";
+      }
+
+      @Override
+      public void bind(SupportSQLiteStatement stmt, Tea value) {
+        stmt.bindLong(1, value.getId());
+      }
+    };
+    this.__updateAdapterOfTea = new EntityDeletionOrUpdateAdapter<Tea>(__db) {
+      @Override
+      public String createQuery() {
+        return "UPDATE OR ABORT `tea_table` SET `id` = ?,`teaType` = ?,`steepTimeShort` = ?,`steepTimeMedium` = ?,`steepTimeLo

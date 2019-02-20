@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "454573025770",
+    "firebase_url": "https://firestoretutorial-b4699.firebaseio.com",
+    "project_id": "firestoretutorial-b4699",
+    "storage_bucket": "firestoretutorial-b4699.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454573025770:android:422c6609e6eb0e86",
+        "android_client_info": {
+          "package_name": "ca.sebon.firestoretutorial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454573025770-ejvms3j0bhkso5iifu304bjbsjtak55m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ca.sebon.firestoretutorial",
+            "certificate_hash": "4bc5fc7abe11b3db25612ddd1d853e63319d1782"
+          }
+        },
+        {
+          "client_id": "454573025770-l1ujgvfrnafak2l1rukr4hs1c39f8k6f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2awqsrjQcwqyGcLM0cYkjijDA5chEwIQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "454573025770-l1ujgvfrnafak2l1rukr4hs1c39f8k6f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
