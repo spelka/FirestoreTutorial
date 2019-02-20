@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference noteRef = db.collection("Notebook").document("My First Note Document");
-    private ListenerRegistration noteListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //Attach event listener in onStart
-        noteListener = noteRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        noteRef.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 //check if something went wrong, and stop if there is a problem
@@ -72,13 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //Detatach event listener in onStop, to prevent bandwidth usage in the background
-        noteListener.remove();
     }
 
     public void saveNote(View v)
