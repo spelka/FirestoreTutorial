@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    //return results of a simple query
     public void loadNotes(View v)
     {
         notebookRef.whereGreaterThanOrEqualTo("priority", 1)      //range operator
@@ -141,6 +145,38 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, e.toString());
                     }
                 });
+    }
+
+    public void notPriorityTwo(View v)
+    {
+        Task task1 = notebookRef.whereLessThan("priority", 2)
+                .orderBy("priority", Query.Direction.ASCENDING)
+                .get();
+
+        Task task2 = notebookRef.whereGreaterThan("priority", 2)
+                .orderBy("priority", Query.Direction.ASCENDING)
+                .get();
+
+        Task<List<QuerySnapshot>> allTasks = Tasks.whenAllSuccess(task1, task2);
+        allTasks.addOnSuccessListener(new OnSuccessListener<List<QuerySnapshot>>() {
+            @Override
+            public void onSuccess(List<QuerySnapshot> querySnapshots) {
+                //iterate through the List of query snapshot to get our document query document snapshots
+                String data = "";
+                for (QuerySnapshot queryDocumentSnapshots : querySnapshots)
+                {
+                    //iterate through the List of query document snapshots to get our document snapshots
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Note note = documentSnapshot.toObject(Note.class);
+                        note.setDocumentId(documentSnapshot.getId());
+                        data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\nPriority: " + note.getPriority() + "\n\n";
+                    }
+
+                    textViewData.setText(data);
+                }
+            }
+        });
+
     }
 
 
