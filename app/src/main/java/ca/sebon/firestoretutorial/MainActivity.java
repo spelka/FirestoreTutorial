@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -18,6 +19,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference noteRef = db.collection("Notebook").document("My First Note Document");
+    private CollectionReference notebookRef = db.collection("Notebook");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,29 +57,78 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //Attach event listener in onStart
-        noteRef.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        notebookRef.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                //check if something went wrong, and stop if there is a problem
-                if (e != null)
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                //dont execute if there is an error
+                if ( e != null )
                 {
-                    Toast.makeText(MainActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, e.toString());
                     return;
                 }
 
-                if (documentSnapshot.exists())
+                String data = "";
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
                 {
                     Note note = documentSnapshot.toObject(Note.class);
-                    textViewData.setText("Title: " + note.getTitle() + "\n" + "Description: " + note.getDescription());
+                    data += "Title: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
                 }
-                else
-                {
-                    textViewData.setText("");
-                }
+
+                textViewData.setText(data);
             }
         });
     }
+
+    public void addNote(View v)
+    {
+        String title = editTextTitle.getText().toString();
+        String description = editTextDescription.getText().toString();
+
+        //add strings into a container to pass into the DB. Can use a map or an object.
+        Note note = new Note(title, description);
+
+        // add the note to the DB
+        notebookRef.add(note)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Toast.makeText(MainActivity.this, "Note Saved", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, e.toString());
+                    }
+                });
+    }
+
+    public void loadNotes(View v)
+    {
+        notebookRef.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        //iterate through the query snapshot to get our document snapshots
+                        String data = "";
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
+                        {
+                            Note note = documentSnapshot.toObject(Note.class);
+                            data += "Title: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
+                        }
+
+                        textViewData.setText(data);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, e.toString());
+                    }
+                });
+    }
+
 
     public void saveNote(View v)
     {
@@ -101,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
 
     public void mergeDescription(View v)
     {
