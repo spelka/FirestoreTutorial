@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -70,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
 
                     textViewData.setText("Title: " + title + "\n" + "Description: " + description);
                 }
+                else
+                {
+                    textViewData.setText("");
+                }
             }
         });
     }
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         note.put(KEY_DESCRIPTION, description);
 
         //SetOptions.merge() will use the merge strategy and will not destroy the old document and replace it with a new one when updating.
-        //If the docuument does not exist, it will create one, only with the provided data.
+        //If the document does not exist, it will create one, only with the provided data.
         //Fields not provided will not exist in the document (not even as a null)
         noteRef.set(note, SetOptions.merge());
 
@@ -119,6 +124,42 @@ public class MainActivity extends AppCompatActivity {
     {
         String description = editTextDescription.getText().toString();
         noteRef.update(KEY_DESCRIPTION, description);
+    }
+
+    public void deleteDescription(View v)
+    {
+        noteRef.update(KEY_DESCRIPTION, FieldValue.delete())
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(MainActivity.this, "Note Description Deleted", Toast.LENGTH_SHORT).show();
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(MainActivity.this, "Error Deleting Note Description!", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, e.toString());
+            }
+        });
+    }
+
+    public void deleteNote(View v)
+    {
+        noteRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MainActivity.this, "Note Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Error Deleting Note!", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, e.toString());
+                    }
+                });
     }
 
     public void loadNote(View v)
