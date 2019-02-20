@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -113,7 +114,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadNotes(View v)
     {
-        notebookRef.get()
+        notebookRef.whereGreaterThanOrEqualTo("priority", 1)      //range operator
+                .whereLessThanOrEqualTo("priority", 3)            //range operator
+                .orderBy("priority", Query.Direction.DESCENDING)        //sorting operator
+                .orderBy("title", Query.Direction.ASCENDING)            //sorting operator
+                .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
