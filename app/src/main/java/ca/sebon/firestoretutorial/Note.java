@@ -7,10 +7,18 @@ public class Note
     private String documentId;
     private String title;
     private String description;
+    private int priority;
 
     public Note()
     {
         //Firestore requires a public, zero-argument constructor
+    }
+
+    public Note (String title, String description, int priority)
+    {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
     }
 
     //This is excluded because the ID is the name of the document, storing it twice would be redundant
@@ -23,10 +31,12 @@ public class Note
         this.documentId = documentId;
     }
 
-    public Note (String title, String description)
-    {
-        this.title = title;
-        this.description = description;
+    public int getPriority() {
+        return this.priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public String getTitle()

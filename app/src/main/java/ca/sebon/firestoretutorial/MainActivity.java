@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editTextTitle;
     private EditText editTextDescription;
+    private EditText editTextPriority;
     private TextView textViewData;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         editTextTitle = findViewById(R.id.edit_text_title);
         editTextDescription = findViewById(R.id.edit_text_description);
+        editTextPriority = findViewById(R.id.edit_text_priority);
         textViewData = findViewById(R.id.text_view_data);
     }
 
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     Note note = documentSnapshot.toObject(Note.class);
                     note.setDocumentId(documentSnapshot.getId());
-                    data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
+                    data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\nPriority: " + note.getPriority() + "\n\n";
                 }
 
                 textViewData.setText(data);
@@ -83,9 +85,14 @@ public class MainActivity extends AppCompatActivity {
     {
         String title = editTextTitle.getText().toString();
         String description = editTextDescription.getText().toString();
+        //handle the case where there is no value in the priority field
+        if(editTextPriority.length() == 0) {
+            editTextPriority.setText("0");
+        }
+        int priority = Integer.parseInt(editTextPriority.getText().toString());
 
         //add strings into a container to pass into the DB. Can use a map or an object.
-        Note note = new Note(title, description);
+        Note note = new Note(title, description, priority);
 
         // add the note to the DB
         notebookRef.add(note)
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             Note note = documentSnapshot.toObject(Note.class);
                             note.setDocumentId(documentSnapshot.getId());
-                            data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\n\n";
+                            data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\nPriority: " + note.getPriority() + "\n\n";
                         }
 
                         textViewData.setText(data);
@@ -136,9 +143,15 @@ public class MainActivity extends AppCompatActivity {
     {
         String title = editTextTitle.getText().toString();
         String description = editTextDescription.getText().toString();
+        //handle the case where there is no value in the priority field
+        if(editTextPriority.length() == 0)
+        {
+            editTextPriority.setText("0");
+        }
+        int priority = Integer.parseInt(editTextPriority.getText().toString());
 
         //add strings into a container to pass into the DB. Can use a map or an object.
-        Note note = new Note(title, description);
+        Note note = new Note(title, description, priority);
 
         // add the note to the DB
         noteRef.set(note)
