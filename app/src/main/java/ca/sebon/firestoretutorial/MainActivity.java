@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -62,6 +63,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //Attach event listener in onStart
+        notebookRef.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                //dont execute if there is an error
+                if ( e != null )
+                {
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+
+                //update only the relevant data when there are changes to the document set
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges())
+                {
+                    DocumentSnapshot documentSnapshot = dc.getDocument();
+                    String id = documentSnapshot.getId();
+                    int oldIndex = dc.getOldIndex();    //the previous position (index) in the collection; -1 if it didnt exist previously
+                    int newIndex = dc.getNewIndex();    //the new position (index) in the collection
+
+                    switch(dc.getType())
+                    {
+                        case ADDED:
+                            textViewData.append("\nAdded: " + id + "\nOld Index: " + oldIndex + "\nNew Index: " + newIndex);
+                        case REMOVED:
+                            textViewData.append("\nRemoved: " + id + "\nOld Index: " + oldIndex + "\nNew Index: " + newIndex);
+                        case MODIFIED:
+                            textViewData.append("\nModified: " + id + "\nOld Index: " + oldIndex + "\nNew Index: " + newIndex);
+
+
+                    }
+                }
+            }
+        });
     }
 
     public void addNote(View v)
