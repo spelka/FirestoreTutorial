@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void updateDescription(View v)
+    public void mergeDescription(View v)
     {
         String description = editTextDescription.getText().toString();
 
@@ -113,6 +113,12 @@ public class MainActivity extends AppCompatActivity {
         //Fields not provided will not exist in the document (not even as a null)
         noteRef.set(note, SetOptions.merge());
 
+    }
+
+    public void updateDescription(View v)
+    {
+        String description = editTextDescription.getText().toString();
+        noteRef.update(KEY_DESCRIPTION, description);
     }
 
     public void loadNote(View v)

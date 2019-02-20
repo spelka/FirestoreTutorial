@@ -40,6 +40,12 @@
         android:text="Update Description"
         android:onClick="updateDescription"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Merge Description"
+        android:onClick="mergeDescription"/>
+
     <TextView
         android:id="@+id/text_view_data"
         android:layout_width="wrap_content"
