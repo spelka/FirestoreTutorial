@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextTitle;
     private EditText editTextDescription;
     private EditText editTextPriority;
+    private EditText editTextTags;
     private TextView textViewData;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         editTextTitle = findViewById(R.id.edit_text_title);
         editTextDescription = findViewById(R.id.edit_text_description);
         editTextPriority = findViewById(R.id.edit_text_priority);
+        editTextTags = findViewById(R.id.edit_text_tags);
         textViewData = findViewById(R.id.text_view_data);
     }
 
@@ -109,8 +112,12 @@ public class MainActivity extends AppCompatActivity {
         }
         int priority = Integer.parseInt(editTextPriority.getText().toString());
 
+        String tagInput = editTextTags.getText().toString();
+        String[] tagArray = tagInput.split("\\s*,\\s*");
+        List<String> tags = Arrays.asList(tagArray);
+
         //add strings into a container to pass into the DB. Can use a map or an object.
-        Note note = new Note(title, description, priority);
+        Note note = new Note(title, description, priority, tags);
 
         // add the note to the DB
         notebookRef.add(note)
@@ -132,31 +139,30 @@ public class MainActivity extends AppCompatActivity {
     //return results of a simple query
     public void loadNotes(View v)
     {
-        notebookRef.whereGreaterThanOrEqualTo("priority", 1)      //range operator
-                .whereLessThanOrEqualTo("priority", 3)            //range operator
-                .orderBy("priority", Query.Direction.DESCENDING)        //sorting operator
-                .orderBy("title", Query.Direction.ASCENDING)            //sorting operator
-                .get()
+        notebookRef.get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        //iterate through the query snapshot to get our document snapshots
                         String data = "";
+
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
                         {
                             Note note = documentSnapshot.toObject(Note.class);
                             note.setDocumentId(documentSnapshot.getId());
-                            data += "ID: " + note.getDocumentId() + "\nTitle: " + note.getTitle() + "\nDescription: " + note.getDescription() + "\nPriority: " + note.getPriority() + "\n\n";
-                        }
 
+                            String documentId = note.getDocumentId();
+
+                            data += "ID: " + documentId;
+
+                            //iterate over tag strings
+                            for (String tag : note.getTags())
+                            {
+                                data +="\n-" + tag;
+                            }
+
+                            data += "\n\n";
+                        }
                         textViewData.setText(data);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, e.toString());
                     }
                 });
     }
@@ -211,39 +217,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void saveNote(View v)
-    {
-        String title = editTextTitle.getText().toString();
-        String description = editTextDescription.getText().toString();
-        //handle the case where there is no value in the priority field
-        if(editTextPriority.length() == 0)
-        {
-            editTextPriority.setText("0");
-        }
-        int priority = Integer.parseInt(editTextPriority.getText().toString());
-
-        //add strings into a container to pass into the DB. Can use a map or an object.
-        Note note = new Note(title, description, priority);
-
-        // add the note to the DB
-        noteRef.set(note)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(MainActivity.this, "Note Saved", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, e.toString());
-                    }
-                });
-    }
-
-
 
     public void mergeDescription(View v)
     {
