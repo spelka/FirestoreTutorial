@@ -26,6 +26,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.HashMap;
 import java.util.List;
@@ -192,6 +193,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void executeTransaction(View v)
+    {
+        db.runTransaction(new Transaction.Function<Void>()
+        {
+            @android.support.annotation.Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                //read operations MUST come before write operations
+                DocumentReference exampleNoteRef = notebookRef.document("Example Note");
+                DocumentSnapshot exampleNoteSnapshot = transaction.get(exampleNoteRef);
+                long newPriority = exampleNoteSnapshot.getLong("priority") +1;
+
+                //write operations. No more read operations can occur after this
+                transaction.update(exampleNoteRef, "priority", newPriority);
+                return null;
+            }
+        });
+    }
 
     public void saveNote(View v)
     {

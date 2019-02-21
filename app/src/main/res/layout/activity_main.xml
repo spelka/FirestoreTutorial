@@ -46,6 +46,12 @@
         android:text="Execute 'OR' Query"
         android:onClick="notPriorityTwo"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transaction"
+        android:onClick="executeTransaction"/>
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
